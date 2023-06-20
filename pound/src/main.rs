@@ -10,13 +10,13 @@ impl Drop for CleanUp {
     }
 }
 
-fn main() {
+fn main() -> crossterm::Result<()> {
     let _cleanup = CleanUp;
-    terminal::enable_raw_mode().expect("Failed to enable raw mode");
+    terminal::enable_raw_mode()?;
 
     loop {
-        if event::poll(Duration::from_millis(500)).expect("Error") {
-            if let Event::Key(event) = event::read().expect("Failed to read line") {
+        if event::poll(Duration::from_millis(500))? {
+            if let Event::Key(event) = event::read()? {
                 match event {
                     KeyEvent {
                         code: KeyCode::Char('q'),
@@ -34,4 +34,5 @@ fn main() {
             println!("No input yet\r");
         }
     }
+    Ok(())
 }
