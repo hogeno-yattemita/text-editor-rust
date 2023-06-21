@@ -36,8 +36,23 @@ impl Output {
 
     fn draw_rows(&mut self) {
         let screen_rows = self.win_size.1;
+        let screen_columns = self.win_size.0;
         for i in 0..screen_rows {
-            self.editor_contents.push('~');
+            if i == screen_rows / 3 {
+                let mut welcome = format!("Pound editor -- version {}", env!("CARGO_PKG_VERSION"));
+                if welcome.len() > screen_columns {
+                    welcome.truncate(screen_columns);
+                }
+                let mut padding = (screen_columns - welcome.len()) / 2;
+                if padding != 0 {
+                    self.editor_contents.push('~');
+                    padding -= 1
+                }
+                (0..padding).for_each(|_| self.editor_contents.push(' '));
+                self.editor_contents.push_str(&welcome);
+            } else {
+                self.editor_contents.push('~');
+            }
             queue! {
                 self.editor_contents,
                 terminal::Clear(ClearType::UntilNewLine),
