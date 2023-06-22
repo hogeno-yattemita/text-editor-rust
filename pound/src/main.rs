@@ -27,7 +27,7 @@ impl Output {
         Self {
             win_size,
             editor_contents: EditorContents::new(),
-            cursor_controller: CursorController::new(),
+            cursor_controller: CursorController::new(win_size),
         }
     }
 
@@ -178,23 +178,41 @@ impl std::io::Write for EditorContents {
 struct CursorController {
     cursor_x: usize,
     cursor_y: usize,
+    screen_columns: usize,
+    screen_rows: usize,
 }
 
 impl CursorController {
-    fn new() -> CursorController {
+    fn new(win_size: (usize, usize)) -> CursorController {
         Self {
             cursor_x: 0,
             cursor_y: 0,
+            screen_columns: win_size.0,
+            screen_rows: win_size.1,
         }
     }
 
     fn move_cursor(&mut self, direction: KeyCode) {
         match direction {
-            KeyCode::Left => self.cursor_x -= 1,
-            KeyCode::Down => self.cursor_y += 1,
-            KeyCode::Up => self.cursor_y -= 1,
-            KeyCode::Right => self.cursor_x += 1,
-            _ => {}
+            KeyCode::Left => {
+                if self.cursor_x != 0 {
+                    self.cursor_x -= 1;
+                }
+            }
+            KeyCode::Down => {
+                if self.cursor_y != self.screen_rows - 1 {
+                    self.cursor_y += 1;
+                }
+            }
+            KeyCode::Up => {
+                self.cursor_y = self.cursor_y.saturating_sub(1);
+            }
+            KeyCode::Right => {
+                if self.cursor_x != self.screen_columns - 1 {
+                    self.cursor_x += 1;
+                }
+            }
+            _ => unimplemented!(),
         }
     }
 }
