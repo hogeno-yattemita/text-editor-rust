@@ -118,7 +118,7 @@ impl Editor {
                 modifiers: event::KeyModifiers::CONTROL,
                 kind: event::KeyEventKind::Press,
                 state: event::KeyEventState::NONE,
-            } => return Ok(true),
+            } => return Ok(false),
             KeyEvent {
                 code: direction @ (KeyCode::Up | KeyCode::Down | KeyCode::Left | KeyCode::Right),
                 modifiers: event::KeyModifiers::NONE,
